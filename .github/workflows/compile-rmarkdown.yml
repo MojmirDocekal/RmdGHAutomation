@@ -4,24 +4,24 @@ on:
   push:
     branches:   
       - main
-    paths:  
+    paths:   
       - '**.Rmd'
       - '**.bib'
-  pull_request:
+  pull_request: 
     paths:  
       - '**. Rmd'
       - '**.bib'
 
 jobs:
-  compile-rmarkdown: 
+  compile-rmarkdown:  
     runs-on: ubuntu-latest
     
     permissions:
       contents: read
     
     steps:  
-      - name:  Checkout repository
-        uses:  actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
       # Install R with caching
       - name: Setup R
@@ -34,37 +34,20 @@ jobs:
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
       
-      # Cache TeXLive packages - THIS IS THE BIG TIME SAVER!
-      - name: Cache TeXLive
-        uses: actions/cache@v4
-        id: cache-texlive
-        with: 
-          path: /usr/share/texlive
-          key:  texlive-${{ runner. os }}-full
+      # Cache APT packages - this caches the downloaded . deb files
+      - name:  Cache APT packages
+        uses:  awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages:  texlive-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-humanities texlive-bibtex-extra texlive-science texlive-publishers
+          version: 1.0
           
-      # Only install TeXLive if not cached
-      - name: Install TeXLive
-        if:  steps.cache-texlive. outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            texlive-base \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-fonts-extra \
-            texlive-humanities \
-            texlive-bibtex-extra \
-            texlive-science \
-            texlive-publishers
-      
       # Cache R packages
-      - name:  Cache R packages
+      - name: Cache R packages
         uses: actions/cache@v4
-        with: 
+        with:  
           path: ${{ env.R_LIBS_USER }}
           key: r-packages-${{ runner.os }}-${{ hashFiles('**/DESCRIPTION') }}
-          restore-keys: |
+          restore-keys:  |
             r-packages-${{ runner.os }}-
       
       # Install R packages
@@ -75,7 +58,7 @@ jobs:
       # Compile the R Markdown document to PDF
       - name: Render R Markdown to PDF
         run: |
-          R -e 'rmarkdown::render("document.Rmd", output_format = rmarkdown::pdf_document(keep_tex = TRUE))'
+          R -e 'rmarkdown:: render("document.Rmd", output_format = rmarkdown:: pdf_document(keep_tex = TRUE))'
       
       # Upload both PDF and intermediate . tex file for debugging
       - name: Upload PDF artifact
