@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: 
   pdf_document:
     keep_tex: true
-    latex_engine: pdflatex
+    latex_engine:  pdflatex
 header-includes:
   - \usepackage{linguex}
   - \usepackage{qtree}
@@ -13,8 +13,6 @@ header-includes:
   - \usepackage{graphicx}
   - \usepackage{hyperref}
 ---
-
-One, two, three.
 
 # Introduction
 
@@ -26,24 +24,29 @@ You can write in **Markdown** syntax for simple formatting, but you can also use
 
 Using the `linguex` package for numbered examples:
 
-\ex. One brown mouse chased one white cat.
+\ex.  One brown mouse chased one white cat.
 
 \ex. One white dog slept. 
 
-\a. This is a sub-example. 
+\a. This is a sub-example.
+
 \b. This is another sub-example.
 
 # Syntax Trees
 
-Using the `qtree` package for drawing syntax trees:
+Using the `qtree` package for drawing syntax trees.  For qtree to work in R Markdown, we need to wrap it in a LaTeX environment:
 
-\Tree [. S [.NP [.Det the ] [.N cat ] ] [.VP [.V sat ] ] ]
+\begin{center}
+\Tree [.S [.NP [.Det the ] [.N cat ] ] [.VP [.V sat ] ] ]
+\end{center}
 
 \bigskip
 
 Here's a more complex tree:
 
-\Tree [. S [.NP [.Det A ] [.N linguist ] ] [.VP [.V studies ] [.NP [.N syntax ] ] ] ]
+\begin{center}
+\Tree [.S [.NP [.Det A ] [.N linguist ] ] [.VP [.V studies ] [.NP [.N syntax ] ] ] ]
+\end{center}
 
 # Mathematical Examples
 
@@ -72,7 +75,8 @@ And then switch to LaTeX for specialized content:
 
 \ex. The cat is on the mat.
 
-\ex. \a. Who did you see? 
+\ex. \a. Who did you see?
+
 \b. *What did you see who? 
 
 # Conclusion
