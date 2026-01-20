@@ -2,61 +2,49 @@ name: Compile R Markdown Document
 
 on:  
   push:
-    branches:  
+    branches:   
       - main
     paths:  
       - '**.Rmd'
       - '**.bib'
   pull_request:
-    paths: 
-      - '**.Rmd'
+    paths:  
+      - '**. Rmd'
       - '**.bib'
 
 jobs:
-  compile-rmarkdown:
+  compile-rmarkdown: 
     runs-on: ubuntu-latest
     
     permissions:
       contents: read
     
     steps:  
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name:  Checkout repository
+        uses:  actions/checkout@v4
       
-      # Install R
+      # Install R with caching
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version:  'release'
+          use-public-rspm: true  # Speeds up R package installation
       
-      # Install pandoc (needed for R Markdown)
+      # Install pandoc
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
       
-      # Install comprehensive TeXLive for linguistics/scientific papers
-      # CURRENTLY INSTALLED PACKAGES:
-      # - texlive-base:  Core LaTeX functionality
-      # - texlive-latex-recommended:  Commonly used LaTeX packages
-      # - texlive-latex-extra: Additional LaTeX packages (includes many useful packages)
-      # - texlive-fonts-recommended: Standard fonts for LaTeX
-      # - texlive-fonts-extra: Additional font packages
-      # - texlive-humanities: Packages for linguistics (linguex, qtree, gb4e, etc.)
-      # - texlive-bibtex-extra: Bibliography management tools
-      # - texlive-science: Scientific packages (algorithms, chemistry, physics, etc.)
-      # - texlive-publishers:  Packages for various publishers (IEEE, ACM, Springer, etc.)
-      #
-      # HOW TO ADD MORE PACKAGES:
-      # If your compilation fails with an error like "File `packagename.sty' not found",
-      # you need to install additional TeXLive packages. 
-      #
-      # To add packages, add them to the apt-get install line below. 
-      #
-      # HOW TO FIND MISSING PACKAGES FROM ERROR LOGS:
-      # 1. Check the workflow run logs in the "Render R Markdown to PDF" step
-      # 2. Look for error messages like "!  LaTeX Error: File `xyz.sty' not found"
-      # 3. Search online for "xyz.sty ubuntu package" or "xyz.sty texlive"
-      # 4. The package is usually named texlive-<category> where the . sty file belongs
+      # Cache TeXLive packages - THIS IS THE BIG TIME SAVER!
+      - name: Cache TeXLive
+        uses: actions/cache@v4
+        id: cache-texlive
+        with: 
+          path: /usr/share/texlive
+          key:  texlive-${{ runner. os }}-full
+          
+      # Only install TeXLive if not cached
       - name: Install TeXLive
+        if:  steps.cache-texlive. outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -70,20 +58,28 @@ jobs:
             texlive-science \
             texlive-publishers
       
-      # Install only essential R packages for rendering
+      # Cache R packages
+      - name:  Cache R packages
+        uses: actions/cache@v4
+        with: 
+          path: ${{ env.R_LIBS_USER }}
+          key: r-packages-${{ runner.os }}-${{ hashFiles('**/DESCRIPTION') }}
+          restore-keys: |
+            r-packages-${{ runner.os }}-
+      
+      # Install R packages
       - name: Install R packages
         run: |
           R -e 'install.packages(c("rmarkdown", "knitr"), repos="https://cloud.r-project.org")'
       
       # Compile the R Markdown document to PDF
-      # The keep_tex option helps with debugging LaTeX errors
       - name: Render R Markdown to PDF
         run: |
           R -e 'rmarkdown::render("document.Rmd", output_format = rmarkdown::pdf_document(keep_tex = TRUE))'
       
       # Upload both PDF and intermediate . tex file for debugging
       - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
+        uses:  actions/upload-artifact@v4
         with:
           name:  compiled-pdf
           path: |
