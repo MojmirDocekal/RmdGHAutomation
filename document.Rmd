@@ -4,7 +4,7 @@ author: "RmdGHAutomation"
 date: "`r Sys.Date()`"
 output: 
   pdf_document:
-    keep_tex: true
+    keep_tex:  true
     latex_engine:  pdflatex
 header-includes:
   - \usepackage{linguex}
@@ -18,26 +18,27 @@ header-includes:
 
 This is a test document demonstrating R Markdown with extensive LaTeX package support for scientific and linguistic papers.
 
-You can write in **Markdown** syntax for simple formatting, but you can also use LaTeX commands directly whenever needed.
+You can write in **Markdown** syntax for simple formatting, but you can also use LaTeX commands directly whenever needed. 
 
 # Linguistic Examples
 
-Using the `linguex` package for numbered examples:
+Using the `linguex` package for numbered examples.  We need to wrap linguex commands in raw LaTeX blocks:
 
-\ex.  One brown mouse chased one white cat.
+```{=latex}
+\ex. One brown mouse chased one white cat.
 
 \ex. One white dog slept. 
-
-\a. This is a sub-example.
-
+\a. This is a sub-example. 
 \b. This is another sub-example.
+```
 
 # Syntax Trees
 
-Using the `qtree` package for drawing syntax trees.  For qtree to work in R Markdown, we need to wrap it in a LaTeX environment:
+Using the `qtree` package for drawing syntax trees: 
 
+```{=latex}
 \begin{center}
-\Tree [.S [.NP [.Det the ] [.N cat ] ] [.VP [.V sat ] ] ]
+\Tree [.S [.NP [. Det the ] [.N cat ] ] [.VP [.V sat ] ] ]
 \end{center}
 
 \bigskip
@@ -45,8 +46,9 @@ Using the `qtree` package for drawing syntax trees.  For qtree to work in R Mark
 Here's a more complex tree:
 
 \begin{center}
-\Tree [.S [.NP [.Det A ] [.N linguist ] ] [.VP [.V studies ] [.NP [.N syntax ] ] ] ]
+\Tree [.S [.NP [. Det A ] [.N linguist ] ] [.VP [.V studies ] [.NP [. N syntax ] ] ] ]
 \end{center}
+```
 
 # Mathematical Examples
 
@@ -56,7 +58,7 @@ This section demonstrates the use of the `amsmath` package. Here is Einstein's f
 E = mc^2
 \end{equation}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Here is a more complex equation:
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Here is a more complex equation: 
 
 \begin{align}
 a^2 + b^2 &= c^2 \\
@@ -73,15 +75,16 @@ You can seamlessly mix Markdown and LaTeX:
 
 And then switch to LaTeX for specialized content:
 
-\ex. The cat is on the mat.
+```{=latex}
+\ex.  The cat is on the mat. 
 
-\ex. \a. Who did you see?
-
-\b. *What did you see who? 
+\ex. \a. Who did you see? 
+\b. *What did you see who?
+```
 
 # Conclusion
 
-This template demonstrates that R Markdown can handle: 
+This template demonstrates that R Markdown can handle:
 
 1. All standard LaTeX packages (linguex, qtree, amsmath, etc.)
 2. Complex linguistic notation
