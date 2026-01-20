@@ -16,8 +16,6 @@ header-includes:
 
 One, two, three.
 
-Four, five, six.
-
 # Introduction
 
 This is a test document demonstrating R Markdown with extensive LaTeX package support for scientific and linguistic papers.
